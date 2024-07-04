@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./style.css";
 
 const Todo = () => {
+  // Function to get data from local storage
   const getLocalData = () => {
     const lists = localStorage.getItem("myToDoList");
-
     if (lists) {
       return JSON.parse(lists);
     } else {
@@ -12,15 +12,21 @@ const Todo = () => {
     }
   };
 
+  // State for input data
   const [inputData, setInputData] = useState("");
+  // State for list items, initialized with data from local storage
   const [items, setItems] = useState(getLocalData());
+  // State to store the id of the item being edited
   const [editedItem, setEditedItem] = useState("");
+  // State to toggle between add and edit button
   const [toggleButton, setToggleButton] = useState(false);
 
+  // Function to add a new item or update an existing one
   const addItem = () => {
     if (!inputData) {
       alert("Input is Empty!");
     } else if (inputData && toggleButton) {
+      // Update existing item
       setItems(
         items.map((currElem) => {
           if (currElem.id == editedItem) {
@@ -33,6 +39,7 @@ const Todo = () => {
       setEditedItem(null);
       setToggleButton(false);
     } else {
+      // Add new item
       const myInputList = {
         id: new Date().getTime().toString(),
         name: inputData,
@@ -43,27 +50,27 @@ const Todo = () => {
     }
   };
 
+  // Function to set the item for editing
   const editItem = (id) => {
-    const item_todo_edited = items.find((currElem) => {
-      return currElem.id == id;
-    });
+    const item_todo_edited = items.find((currElem) => currElem.id == id);
 
     setInputData(item_todo_edited.name);
     setEditedItem(id);
     setToggleButton(true);
   };
 
+  // Function to delete an item
   const deleteItem = (id) => {
-    const updatedItem = items.filter((currElem) => {
-      return currElem.id !== id;
-    });
+    const updatedItem = items.filter((currElem) => currElem.id !== id);
     setItems(updatedItem);
   };
 
+  // Function to remove all items
   const removeAll = () => {
     setItems([]);
   };
 
+  // Save items to local storage whenever the items state changes
   useEffect(() => {
     localStorage.setItem("myToDoList", JSON.stringify(items));
   }, [items]);
@@ -91,23 +98,21 @@ const Todo = () => {
             )}
           </div>
           <div className="showItems">
-            {items.map((currElem) => {
-              return (
-                <div className="eachItem" key="currElem.id">
-                  <h1>{currElem.name}</h1>
-                  <div className="todo-btn">
-                    <i
-                      className="far fa-edit add-btn"
-                      onClick={() => editItem(currElem.id)}
-                    ></i>
-                    <i
-                      className="far fa-trash-alt add-btn"
-                      onClick={() => deleteItem(currElem.id)}
-                    ></i>
-                  </div>
+            {items.map((currElem) => (
+              <div className="eachItem" key="currElem.id">
+                <h1>{currElem.name}</h1>
+                <div className="todo-btn">
+                  <i
+                    className="far fa-edit add-btn"
+                    onClick={() => editItem(currElem.id)}
+                  ></i>
+                  <i
+                    className="far fa-trash-alt add-btn"
+                    onClick={() => deleteItem(currElem.id)}
+                  ></i>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
           <div className="showItems">
             <button
